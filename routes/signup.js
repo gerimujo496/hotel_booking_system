@@ -3,16 +3,16 @@ const mongoose = require("mongoose");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const router = express.Router();
-const { User, validate } = require("../models/user");
+const { User } = require("../models/user");
+const { validateUser } = require("../validation/userValidation");
 
 router.post("/", async (req, res) => {
-  const { error } = validate(req.body);
+  const { error } = validateUser(req.body);
   if (error) {
     return res.status(400).send(error.details[0].message);
   }
 
   let user = await User.findOne({ email: req.body.email });
-
   if (user) {
     return res.status(400).send({ message: "User already registered" });
   }
@@ -26,7 +26,6 @@ router.post("/", async (req, res) => {
   await newUser.save();
 
   const token = newUser.generateAuthToken();
-
   res
     .header("x-auth-token", token)
     .send(
