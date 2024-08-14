@@ -1,7 +1,7 @@
 const express = require('express');
-const {Room} = require('../models/room');
+const {Room} = require('../../models/room');
 
-const validateRoom = require('../validation/roomValidation');
+const validateRoom = require('./roomValidation');
 
 const router = express.Router();
 
