@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const roomSchema = new mongoose.Schema({
   type: {
     type: String,
-    enum: ["Single, Double, Triple, Deluxe"],
+    enum: ["Single", "Double", "Triple", "Deluxe"],
     required: true,
   },
   number: { type: Number, required: true },

@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const _ = require("lodash");
 const bcrypt = require("bcrypt");
 const router = express.Router();
-const { User } = require("../models/user");
-const { validateUser } = require("../validation/userValidation");
+const { User } = require("../../models/user");
+const { validateUser } = require("./userValidation");
 
 router.post("/", async (req, res) => {
   const { error } = validateUser(req.body);
