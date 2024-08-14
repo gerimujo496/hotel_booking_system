@@ -1,7 +1,7 @@
 require("express-async-errors");
 const jwt = require("jsonwebtoken");
 
-module.exports = (listOfRolesAllowed) => {
+module.exports =  (listOfRolesAllowed) => {
   return async (req, res, next) => {
     const token = req.header("x-auth-token");
     if (!token)

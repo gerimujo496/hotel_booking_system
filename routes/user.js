@@ -4,11 +4,12 @@ const { Booking } = require("../models/booking");
 const authz = require("../middleware/authz");
 const validateID = require("../middleware/validateID");
 const validateParamsIDwithToken = require("../middleware/validateParamsIDwithToken");
+
 const router = express.Router();
 
 router.post(
   "/requestToBook/:userId",
-  [validateID, validateParamsIDwithToken["userId"], authz["Client"]],
+  [validateID, validateParamsIDwithToken(["userId"]), authz(["Client"])],
   async (req, res) => {
     //requestToBook/:userId?arrivalDate=YYYY-MM-DD&&departureDate=YYYY-MM-DD&&roomId=:roomId
     if (
@@ -17,7 +18,7 @@ router.post(
       !req.query.roomId ||
       !req.params.userId
     )
-      return res.status(400).send(`Invalid Request !`);
+      return res.status(400).send(`Invalid Request`);
 
     const checkIfBookingExicts = await Booking.findOne({
       arrivalDate: { $gte: req.query.arrivalDate },
@@ -42,7 +43,7 @@ router.post(
 
 router.delete(
   "/requestToBook/:bookingId",
-  [validateID, validateParamsIDwithToken["bookingId"], authz["Client"]],
+  [validateID, validateParamsIDwithToken(["bookingId"]), authz(["Client"])],
   async (req, res) => {
     //requestToBook/:bookingId
     if (!req.params.bookingId) return res.status(400).send(`Invalid Request`);
@@ -67,7 +68,7 @@ router.delete(
 
 router.get(
   "/requestToBook/:bookingId",
-  [validateID, validateParamsIDwithToken["bookingId"], authz["Client"]],
+  [validateID, validateParamsIDwithToken(["bookingId"]), authz(["Client"])],
   async (req, res) => {
     //requestToBook/:bookingId
     if (!req.params.bookingId) return res.status(400).send(`Invalid Request`);
@@ -92,7 +93,7 @@ router.get(
 
 router.put(
   "/requestToBook/:bookingId",
-  [validateID, validateParamsIDwithToken["bookingId"], authz["Client"]],
+  [validateID, validateParamsIDwithToken(["bookingId"]), authz(["Client"])],
   async (req, res) => {
     //requestToBook/:id?arrivalDate=YYYY-MM-DD&&departureDate=YYYY-MM-DD&&roomId=:id
     if (
@@ -135,7 +136,7 @@ router.put(
   }
 );
 
-router.get("/getCurrectClients", [authz["Manager"]], async (req, res) => {
+router.get("/getCurrectClients", [authz(["Manager"])], async (req, res) => {
   const currentClient = await Booking.find({
     arrivalDate: { $lte: Date.now() },
   }).populate({
@@ -148,14 +149,15 @@ router.get("/getCurrectClients", [authz["Manager"]], async (req, res) => {
 
 router.get(
   "/getBookingHistory/:userId",
-  [validateID, validateParamsIDwithToken["userId"], authz["Client"]],
+  [validateID, validateParamsIDwithToken(["userId"]), authz(["Client"])],
   async (req, res) => {
-    const bookings = await Booking.find({ userId: req.params.userId }).populate(
-      {
-        path: "roomId",
-        select: "type, number, description",
-      }
-    );
+    const bookings = await Booking.find({
+      userId: req.params.userId,
+      arrivalDate: { $lte: Date.now() },
+    }).populate({
+      path: "roomId",
+      select: "type, number, description",
+    });
 
     res.status(200).send(bookings);
   }

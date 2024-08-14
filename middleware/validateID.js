@@ -1,7 +1,7 @@
 require("express-async-errors");
 const mongoose = require("mongoose");
 
-module.exports = (req, res, next) => {
+module.exports = async(req, res, next) => {
   const arrayOfId = [];
 
   for (key of Object.keys(req.params)) {
@@ -15,4 +15,5 @@ module.exports = (req, res, next) => {
   });
 
   next();
+ 
 };
