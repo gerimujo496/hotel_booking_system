@@ -1,5 +1,7 @@
-module.exports = (req, res, next) => {
-  const user = useContext(req, res);
+const useContext = require("./useContext");
+
+module.exports = async(req, res, next) => {
+  const user = await useContext(req, res);
   req.user = user;
 
   if (user.isManager) next();

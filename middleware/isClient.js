@@ -1,9 +1,9 @@
+const useContext = require("./useContext");
 const validateToken = require("./validateToken");
 
-module.exports = (req, res, next) => {
-
-  const user = useContext(req, res);
+module.exports = async (req, res, next) => {
+  const user = await useContext(req, res);
   req.user = user;
-  
-  if (user.isManager) next();
+
+  next();
 };
