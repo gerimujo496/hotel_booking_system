@@ -1,133 +1,119 @@
 require("express-async-errors");
 const express = require("express");
 const { Booking } = require("../models/booking");
+const { Room } = require("../models/room");
 const authz = require("../middleware/authz");
 const validateID = require("../middleware/validateID");
 const validateParamsIDwithToken = require("../middleware/validateParamsIDwithToken");
+const path = require("path");
+const isClient = require("../middleware/isClient");
+const isManager = require("../middleware/isManager");
 
 const router = express.Router();
 
-router.post(
-  "/requestToBook/:userId",
-  [validateID, validateParamsIDwithToken(["userId"]), authz(["Client"])],
-  async (req, res) => {
-    //requestToBook/:userId?arrivalDate=YYYY-MM-DD&&departureDate=YYYY-MM-DD&&roomId=:roomId
-    if (
-      !req.query.arrivalDate ||
-      !req.query.departureDate ||
-      !req.query.roomId ||
-      !req.params.userId
-    )
-      return res.status(400).send(`Invalid Request`);
+router.post("/requestToBook/", isClient, async (req, res) => {
+  const { arrivalDate, departureDate, roomId } = req.query;
+  const { user } = req;
 
-    const checkIfBookingExicts = await Booking.findOne({
-      arrivalDate: { $gte: req.query.arrivalDate },
-      departureDate: { $lt: req.query.departureDate },
-      roomId: req.params.userId,
-    });
+  if (!arrivalDate || !departureDate || !roomId || user._id)
+    return res.status(400).send(`Invalid Request`);
 
-    if (checkIfBookingExicts && checkIfBookingExicts.isApproved)
-      return res.status(400).send(`The room is not avaible on those dates !`);
+  const existingBooking = await Booking.findOne({
+    arrivalDate: { $gte: req.query.arrivalDate },
+    departureDate: { $lt: req.query.departureDate },
+    roomId: req.query.roomId,
+  });
 
-    const booking = new Booking({
-      userId: req.params.userId,
-      roomId: req.query.roomId,
-      arrivalDate: req.query.arrivalDate,
-      departureDate: req.query.departureDate,
-    });
+  const room = await Room.findOne({ _id: roomId });
+  if (!room) res.status(400).send(`The room does not exists !`);
 
-    const newBooking = await booking.save();
-    res.status(201).send(newBooking);
-  }
-);
+  if (existingBooking && existingBooking.isApproved)
+    return res.status(400).send(`The room is not available on those dates !`);
 
-router.delete(
-  "/requestToBook/:bookingId",
-  [validateID, validateParamsIDwithToken(["bookingId"]), authz(["Client"])],
-  async (req, res) => {
-    //requestToBook/:bookingId
-    if (!req.params.bookingId) return res.status(400).send(`Invalid Request`);
+  const booking = new Booking({
+    userId: user._id,
+    roomId: roomId,
+    arrivalDate: arrivalDate,
+    departureDate: departureDate,
+  });
 
-    const checkIfBookingExicts = await Booking.findOne({
-      _id: req.params.bookingId,
-    });
+  const newBooking = await booking.save();
+  res.status(201).send(newBooking);
+});
 
-    if (!checkIfBookingExicts)
-      return res
-        .status(400)
-        .send(
-          `The booking with the id: ${req.params.bookingId} does not exists  !`
-        );
+router.delete("/requestToBook/:bookingId", isClient, async (req, res) => {
+  const { bookingId } = req.params;
+  if (!bookingId) return res.status(400).send(`Invalid Request`);
 
-    const bookingDelete = await checkIfBookingExicts.deleteOne({
-      _id: checkIfBookingExicts._id,
-    });
-    res.status(200).send(bookingDelete);
-  }
-);
+  const existingBooking = await Booking.findOne({
+    _id: bookingId,
+  });
 
-router.get(
-  "/requestToBook/:bookingId",
-  [validateID, validateParamsIDwithToken(["bookingId"]), authz(["Client"])],
-  async (req, res) => {
-    //requestToBook/:bookingId
-    if (!req.params.bookingId) return res.status(400).send(`Invalid Request`);
+  if (!existingBooking)
+    return res
+      .status(400)
+      .send(`The booking with the id: ${bookingId} does not exists  !`);
 
-    const booking = await Booking.findOne({
-      _id: req.params.bookingId,
-    })
-      .populate({ path: "userId", select: "firstName, lastName, email" })
-      .populate({ path: "roomId", select: "type, number, description" });
+  const bookingDelete = await Booking.deleteOne({
+    _id: bookingId,
+  });
+  res.status(200).send(bookingDelete);
+});
 
-    if (!booking)
-      return res
-        .status(400)
-        .send(
-          `The booking with the id: ${req.params.bookingId} does not exists  !`
-        );
-    booking;
+router.get("/requestToBook/:bookingId", isClient, async (req, res) => {
+  const { bookingId } = req.params;
+  if (bookingId) return res.status(400).send(`Invalid Request`);
 
-    res.status(200).send(booking);
-  }
-);
+  const booking = await Booking.findOne({
+    _id: bookingId,
+  })
+    .populate({ path: "userId", select: "firstName, lastName, email" })
+    .populate({ path: "roomId", select: "type, number, description" });
+
+  if (!booking)
+    return res
+      .status(400)
+      .send(`The booking with the id: ${bookingId} does not exists  !`);
+  booking;
+
+  res.status(200).send(booking);
+});
 
 router.put(
   "/requestToBook/:bookingId",
-  [validateID, validateParamsIDwithToken(["bookingId"]), authz(["Client"])],
+  isClient,
   async (req, res) => {
-    //requestToBook/:id?arrivalDate=YYYY-MM-DD&&departureDate=YYYY-MM-DD&&roomId=:id
-    if (
-      !req.query.arrivalDate ||
-      !req.query.departureDate ||
-      !req.query.roomId ||
-      !req.params.bookingId
-    )
-      return res.status(400).send(`Invalid Request !`);
 
-    const booking = await Booking.findOne({ _id: req.params.bookingId });
+    const { arrivalDate, departureDate, roomId } = req.query;
+    const { bookingId } = req;
+
+    if (!arrivalDate || !departureDate || !roomId || !bookingId)
+      return res.status(400).send(`Invalid Request`);
+
+    const booking = await Booking.findOne({ _id: bookingId });
 
     if (!booking)
       return res
         .status(400)
         .send(
-          `The booking with the id: ${req.params.bookingId} does not exists  !`
+          `The booking with the id: ${bookingId} does not exists  !`
         );
 
-    const RoomAvaible = await Booking.findOne({
-      arrivalDate: { $gte: req.query.arrivalDate },
-      departureDate: { $lt: req.query.departureDate },
-      roomId: req.params.bookingId,
+    const availableRoom = await Booking.findOne({
+      arrivalDate: { $gte: arrivalDate },
+      departureDate: { $lt: departureDate },
+      roomId: bookingId,
     });
 
-    if (RoomAvaible && RoomAvaible.isApproved)
-      return res.status(400).send(`The room is not avaible on those dates !`);
+    if (availableRoom && availableRoom.isApproved)
+      return res.status(400).send(`The room is not available on those dates !`);
 
     const newBooking = await Booking.findOneAndUpdate(
       {
-        arrivalDate: req.query.arrivalDate,
-        departureDate: req.query.departureDate,
-        roomId: req.query.roomId,
-        _id: req.params.bookingId,
+        arrivalDate: arrivalDate,
+        departureDate: departureDate,
+        roomId: roomId,
+        _id: bookingId,
       },
       { new: true }
     );
@@ -136,7 +122,8 @@ router.put(
   }
 );
 
-router.get("/getCurrectClients", [authz(["Manager"])], async (req, res) => {
+router.get("/getCurrentClient", isManager, async (req, res) => {
+
   const currentClient = await Booking.find({
     arrivalDate: { $lte: Date.now() },
   }).populate({
@@ -149,10 +136,14 @@ router.get("/getCurrectClients", [authz(["Manager"])], async (req, res) => {
 
 router.get(
   "/getBookingHistory/:userId",
-  [validateID, validateParamsIDwithToken(["userId"]), authz(["Client"])],
+ isClient,
   async (req, res) => {
+
+    const {userId} =  req.params;
+    if(!userId) return res.status(400).send(`Invalid Request !`)
+
     const bookings = await Booking.find({
-      userId: req.params.userId,
+      userId: userId,
       arrivalDate: { $lte: Date.now() },
     }).populate({
       path: "roomId",
@@ -163,4 +154,4 @@ router.get(
   }
 );
 
-module.exports = router;
+
