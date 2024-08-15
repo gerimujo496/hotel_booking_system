@@ -2,7 +2,7 @@ require("express-async-errors");
 const express = require("express");
 const { Booking } = require("../../models/booking");
 const router = express.Router();
-
+const isManager = require("../../middleware/isManager");
 /**
  * @swagger
  * /bookingApprove/{id}:
@@ -10,6 +10,8 @@ const router = express.Router();
  *     summary: Approve a booking and update other conflicting bookings.
  *     tags: 
  *       - Manager Bookings
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -52,7 +54,7 @@ const router = express.Router();
  *       500:
  *         description: An error occurred while processing the request.
  */
-router.post("/:id", async (req, res) => {
+router.post("/:id", isManager,async (req, res) => {
   const booking = await Booking.findByIdAndUpdate(
     req.params.id,
     {

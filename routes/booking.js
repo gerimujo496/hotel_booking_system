@@ -9,7 +9,7 @@ const generateVoucher = require("../helpers/generateVoucher");
 const router = express.Router();
 /**
  * @swagger
- * /booking/:
+ * /booking/requestToBook/:
  *   post:
  *     summary: Request to book a room
  *     tags: 
@@ -124,7 +124,7 @@ router.post("/requestToBook/", isClient, async (req, res) => {
 
 /**
  * @swagger
- * /booking/{bookingId}:
+ * /booking/requestToBook/{bookingId}:
  *   delete:
  *     summary: Delete a booking request
  *     tags: 
@@ -593,7 +593,7 @@ router.get("/getBookingHistory/", isClient, async (req, res) => {
 });
 /**
  * @swagger
- * /getVoucher/{bookingId}:
+ * /booking/getVoucher/{bookingId}:
  *   get:
  *     summary: Get a voucher PDF for a specific booking
  *     tags: 

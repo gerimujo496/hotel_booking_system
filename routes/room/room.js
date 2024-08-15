@@ -18,6 +18,8 @@ const router = express.Router();
  *     summary: Retrieve a list of all the rooms or available rooms by date
  *     tags: 
  *       - Rooms
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: arrivalDate
@@ -84,6 +86,8 @@ router.get('/',isClient, async (req, res) => {
  *     summary: Retrieve a room by ID
  *     tags: 
  *       - Rooms
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -128,6 +132,8 @@ router.get('/:id',isManager, async (req, res) => {
  *     summary: Create a new room
  *     tags: 
  *       - Rooms
+ *     security:
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -169,6 +175,8 @@ router.post('/', isManager,async (req, res) => {
  *     summary: Update an existing room
  *     tags: 
  *       - Rooms
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -224,6 +232,8 @@ router.put('/:id',isManager, async (req, res) => {
  *     summary: Delete a room by ID
  *     tags: 
  *       - Rooms
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id

@@ -2,7 +2,7 @@ require("express-async-errors");
 const express = require("express");
 const { Booking } = require("../../models/booking");
 const router = express.Router();
-
+const isManager = require("../../middleware/isManager");
 /**
  * @swagger
  * /bookingHistory:
@@ -10,6 +10,8 @@ const router = express.Router();
  *     summary: Get all bookings
  *     tags:
  *       - Manager Bookings
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: A list of all bookings
@@ -45,7 +47,7 @@ const router = express.Router();
  *       500:
  *         description: An error occurred while retrieving the bookings.
  */
-router.get("/", async (req, res) => {
+router.get("/",isManager,async (req, res) => {
   const bookings = await Booking.find({});
 
   if (bookings.length === 0) {
