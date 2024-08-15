@@ -9,7 +9,7 @@ const router = express.Router();
  *   get:
  *     summary: Get all bookings
  *     tags:
- *       - Bookings
+ *       - Manager Bookings
  *     responses:
  *       200:
  *         description: A list of all bookings

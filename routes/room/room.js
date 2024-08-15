@@ -11,7 +11,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/room:
+ * /room:
 
  *   get:
  *     summary: Retrieve a list of all the rooms or available rooms by date
@@ -78,7 +78,7 @@ router.get('/', async (req, res) => {
 });
 /**
  * @swagger
- * /api/room/{id}:
+ * /room/{id}:
  *   get:
  *     summary: Retrieve a room by ID
  *     tags: 
@@ -122,7 +122,7 @@ router.get('/:id', async (req, res) => {
 });
 /**
  * @swagger
- * /api/room:
+ * /room:
  *   post:
  *     summary: Create a new room
  *     tags: 
@@ -163,7 +163,7 @@ router.post('/', async (req, res) => {
 });
 /**
  * @swagger
- * /api/room/{id}:
+ * /room/{id}:
  *   put:
  *     summary: Update an existing room
  *     tags: 
@@ -218,7 +218,7 @@ router.put('/:id', async (req, res) => {
 });
 /**
  * @swagger
- * /api/room/{id}:
+ * room/{id}:
  *   delete:
  *     summary: Delete a room by ID
  *     tags: 

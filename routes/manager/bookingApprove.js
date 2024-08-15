@@ -9,7 +9,7 @@ const router = express.Router();
  *   post:
  *     summary: Approve a booking and update other conflicting bookings.
  *     tags: 
- *       - Bookings
+ *       - Manager Bookings
  *     parameters:
  *       - in: path
  *         name: id

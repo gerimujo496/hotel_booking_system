@@ -19,9 +19,9 @@ const swaggerDefinition = {
 
 const options = {
   swaggerDefinition,
-  apis: ['./swaggerSchema.js','./routes/room/*.js','./routes/signup/*.js', './routes/manager/*.js','./routes/login.js']
+  apis: ['./swaggerSchema.js','./routes/room/*.js','./routes/signup/*.js', './routes/manager/*.js','./routes/login.js','./routes/booking.js']
   
-
+  
 };
 
 // Initialize swagger-jsdoc
