@@ -5,6 +5,7 @@ const { Room } = require("../models/room");
 const isClient = require("../middleware/isClient");
 const isManager = require("../middleware/isManager");
 const PdfPrinter = require("pdfmake");
+const generateVoucher = require("../helpers/generateVoucher");
 const router = express.Router();
 
 router.post("/requestToBook/", isClient, async (req, res) => {
@@ -82,7 +83,7 @@ router.get("/requestToBook/:bookingId", isClient, async (req, res) => {
 
   if (!booking)
     return res
-      .status(400)
+      .status(404)
       .send(`The booking with the id: ${bookingId} does not exists  !`);
   booking;
 
@@ -175,149 +176,25 @@ router.get("/getBookingHistory/", isClient, async (req, res) => {
   res.status(200).send(bookings);
 });
 
-router.get("/getVoucher", isClient, async (req, res) => {
+router.get("/getVoucher/:bookingId", isClient, async (req, res) => {
   try {
     const { user } = req;
+    const { bookingId } = req.params;
 
-    // Fetch booking information
-    const bookings = await Booking.find({ userId: user._id })
+    const booking = await Booking.findOne({ _id: bookingId })
       .populate("userId", "firstName lastName email")
       .populate("roomId", "type number description numberOfBeds")
       .exec();
 
-    if (!bookings || bookings.length === 0) {
-      return res.status(404).send("No bookings found");
+    if (!booking) {
+      return res
+        .status(404)
+        .send(`The booking with the id ${bookingId} does not exists.`);
     }
+    if (booking.userId._id != user._id)
+      return res.status(401).send(`Unauthorized request.`);
 
-    // Define fonts for PdfPrinter
-    var fonts = {
-      Roboto: {
-        normal: "Helvetica",
-        bold: "Helvetica-Bold",
-        italics: "Helvetica-Oblique",
-        bolditalics: "Helvetica-BoldOblique",
-      },
-    };
-
-    var printer = new PdfPrinter(fonts);
-
-    // Define the PDF layout
-    const docDefinition = {
-      content: [
-        { text: "Voucher Document", style: "header" },
-        { text: "Client Information", style: "subheader" },
-        {
-          table: {
-            widths: ["30%", "70%"],
-            body: [
-              [
-                { text: "Name:", style: "label" },
-                {
-                  text: `${bookings[0].userId.firstName} ${bookings[0].userId.lastName}`,
-                  style: "value",
-                },
-              ],
-              [
-                { text: "Email:", style: "label" },
-                { text: bookings[0].userId.email, style: "value" },
-              ],
-            ],
-          },
-          layout: "noBorders",
-        },
-        { text: "Booking Details", style: "subheader" },
-        ...bookings.map((booking) => ({
-          stack: [
-            {
-              table: {
-                widths: ["30%", "70%"],
-                body: [
-                  [
-                    { text: "Room Type:", style: "label" },
-                    { text: booking.roomId.type, style: "value" },
-                  ],
-                  [
-                    { text: "Room Number:", style: "label" },
-                    { text: booking.roomId.number, style: "value" },
-                  ],
-                  [
-                    { text: "Description:", style: "label" },
-                    { text: booking.roomId.description, style: "value" },
-                  ],
-                  [
-                    { text: "Number of Beds:", style: "label" },
-                    { text: booking.roomId.numberOfBeds, style: "value" },
-                  ],
-                  [
-                    { text: "Check-in Date:", style: "label" },
-                    {
-                      text: new Date(booking.arrivalDate).toLocaleDateString(),
-                      style: "value",
-                    },
-                  ],
-                  [
-                    { text: "Check-out Date:", style: "label" },
-                    {
-                      text: new Date(
-                        booking.departureDate
-                      ).toLocaleDateString(),
-                      style: "value",
-                    },
-                  ],
-                  [
-                    { text: "Booking Status:", style: "label" },
-                    {
-                      text:
-                        booking.isApproved === null
-                          ? "Pending"
-                          : booking.isApproved
-                          ? "Approved"
-                          : "Declined",
-                      style: "value",
-                    },
-                  ],
-                ],
-              },
-              layout: {
-                hLineColor: "#aaa",
-                vLineColor: "#aaa",
-              },
-              margin: [0, 10, 0, 10],
-            },
-          ],
-        })),
-        { text: "Thank you for choosing our service!", style: "thankyou" },
-      ],
-      styles: {
-        header: {
-          fontSize: 22,
-          bold: true,
-          margin: [0, 0, 0, 20],
-          color: "#2E86C1",
-        },
-        subheader: {
-          fontSize: 16,
-          bold: true,
-          margin: [0, 20, 0, 10],
-          color: "#2874A6",
-        },
-        label: { fontSize: 12, bold: true, color: "#34495E" },
-        value: { fontSize: 12, color: "#2C3E50" },
-        thankyou: {
-          fontSize: 14,
-          italics: true,
-          margin: [0, 30, 0, 0],
-          color: "#2ECC71",
-          alignment: "center",
-        },
-      },
-      defaultStyle: {
-        font: "Roboto",
-      },
-    };
-
-    // Create the PDF document
-    const pdfDoc = printer.createPdfKitDocument(docDefinition);
+    const pdfDoc = generateVoucher(booking);
     const chunks = [];
 
     pdfDoc.on("data", (chunk) => {
