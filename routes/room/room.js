@@ -7,7 +7,71 @@ const { Booking } = require('../../models/booking');
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Room:
+ *       type: object
+ *       required:
+ *         - type
+ *         - number
+ *       properties:
+ *         id:
+ *           type: string
+ *           description: The auto-generated id of the room
+ *         type:
+ *           type: string
+ *           description: The type of room (e.g., Single, Double)
+ *         number:
+ *           type: integer
+ *           description: The room number
+ *         description:
+ *           type: string
+ *           description: A brief description of the room
+ *         numberOfBeds:
+ *           type: integer
+ *           description: The number of beds in the room
+ *       example:
+ *         id: d5fE_asz
+ *         type: Single
+ *         number: 101
+ *         description: A cozy single room with a sea view.
+ *         numberOfBeds: 1
+ */
 
+/**
+ * @swagger
+ * /rooms:
+ *   get:
+ *     summary: Retrieve a list of available rooms or rooms by dates
+ *     parameters:
+ *       - in: query
+ *         name: arrivalDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Arrival date
+ *       - in: query
+ *         name: departureDate
+ *         schema:
+ *           type: string
+ *           format: date
+ *         description: Departure date
+ *     responses:
+ *       200:
+ *         description: A list of rooms.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Room'
+ *       404:
+ *         description: No available rooms found.
+ *       500:
+ *         description: An error occurred.
+ */
 
 router.get('/', async (req, res) => {
     try {
