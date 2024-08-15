@@ -1,9 +1,9 @@
-const useContext = require("./useContext");
+const context = require("../helpers/context");
 
-module.exports = async(req, res, next) => {
-  const user = await useContext(req, res);
+module.exports = async (req, res, next) => {
+  const user = await context(req, res);
   req.user = user;
 
-  if (user.isManager) next();
-  return res.status(400).send(`Invalid request !`);
+  if (!user.isManager) return res.status(401).send(`Unauthorized request.`);
+  next();
 };
