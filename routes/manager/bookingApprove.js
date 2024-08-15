@@ -1,9 +1,10 @@
 require("express-async-errors");
 const express = require("express");
+const isManager = require("../../middleware/isManager");
 const { Booking } = require("../../models/booking");
 const router = express.Router();
 
-router.post("/:id", async (req, res) => {
+router.post("/:id", isManager, async (req, res) => {
   const booking = await Booking.findByIdAndUpdate(
     req.params.id,
     {

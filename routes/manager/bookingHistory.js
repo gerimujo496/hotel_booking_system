@@ -1,9 +1,10 @@
 require("express-async-errors");
 const express = require("express");
+const isManager = require("../../middleware/isManager");
 const { Booking } = require("../../models/booking");
 const router = express.Router();
 
-router.get("/", async (req, res) => {
+router.get("/", isManager, async (req, res) => {
   const bookings = await Booking.find({});
 
   if (bookings.length === 0) {
