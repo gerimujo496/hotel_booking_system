@@ -3,48 +3,23 @@ const { Room } = require('../../models/room');
 const validateRoom = require('./roomValidation');
 const mongoose = require('mongoose'); 
 const { Booking } = require('../../models/booking');
-
+const isClient = require("../../middleware/isClient");
+const isManager = require("../../middleware/isManager");
 
 const router = express.Router();
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Room:
- *       type: object
- *       required:
- *         - type
- *         - number
- *       properties:
- *         id:
- *           type: string
- *           description: The auto-generated id of the room
- *         type:
- *           type: string
- *           description: The type of room (e.g., Single, Double)
- *         number:
- *           type: integer
- *           description: The room number
- *         description:
- *           type: string
- *           description: A brief description of the room
- *         numberOfBeds:
- *           type: integer
- *           description: The number of beds in the room
- *       example:
- *         id: d5fE_asz
- *         type: Single
- *         number: 101
- *         description: A cozy single room with a sea view.
- *         numberOfBeds: 1
- */
+
 
 /**
  * @swagger
- * /rooms:
+ * /room:
+
  *   get:
- *     summary: Retrieve a list of available rooms or rooms by dates
+ *     summary: Retrieve a list of all the rooms or available rooms by date
+ *     tags: 
+ *       - Rooms
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: arrivalDate
@@ -73,7 +48,7 @@ const router = express.Router();
  *         description: An error occurred.
  */
 
-router.get('/', async (req, res) => {
+router.get('/',isClient, async (req, res) => {
     try {
         const { arrivalDate, departureDate } = req.query;
 
@@ -87,8 +62,8 @@ router.get('/', async (req, res) => {
         const bookedRooms = await Booking.find({
             $or: [
                 {
-                    arrivalDate: { $lte: departure,$gte: arrival  },
-                    departureDate: { $gte: arrival, $lte: departure }
+                    arrivalDate: { $lte: departure },
+                    departureDate: { $gte: arrival }
                 }
             ]
         }).select("roomId");
@@ -104,8 +79,38 @@ router.get('/', async (req, res) => {
         res.status(500).send('An error occurred while getting the room.');
     }
 });
+/**
+ * @swagger
+ * /room/{id}:
+ *   get:
+ *     summary: Retrieve a room by ID
+ *     tags: 
+ *       - Rooms
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The room ID
+ *     responses:
+ *       200:
+ *         description: A single room.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Room'
+ *       404:
+ *         description: The room was not found.
+ *       400:
+ *         description: Invalid ID format.
+ *       500:
+ *         description: An error occurred.
+ */
 
-router.get('/:id', async (req, res) => {
+router.get('/:id',isManager, async (req, res) => {
     const roomId = req.params.id;
   
     if (!mongoose.Types.ObjectId.isValid(roomId)) {
@@ -120,8 +125,31 @@ router.get('/:id', async (req, res) => {
         res.status(500).send('An error occurred while retrieving the room');
     }
 });
+/**
+ * @swagger
+ * /room:
+ *   post:
+ *     summary: Create a new room
+ *     tags: 
+ *       - Rooms
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Room'
+ *     responses:
+ *       201:
+ *         description: Room created successfully.
+ *       400:
+ *         description: Bad request.
+ *       500:
+ *         description: An error occurred.
+ */
 
-router.post('/', async (req, res) => {
+router.post('/', isManager,async (req, res) => {
     try {
         const { error } = validateRoom(req.body);
          if (error) return res.status(400).send(error.details[0].message);
@@ -140,8 +168,40 @@ router.post('/', async (req, res) => {
         res.status(500).send('An error occurred while saving the rooms.');
     }
 });
+/**
+ * @swagger
+ * /room/{id}:
+ *   put:
+ *     summary: Update an existing room
+ *     tags: 
+ *       - Rooms
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The room ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Room'
+ *     responses:
+ *       200:
+ *         description: Room updated successfully.
+ *       404:
+ *         description: The room was not found.
+ *       400:
+ *         description: Invalid ID format or bad request.
+ *       500:
+ *         description: An error occurred.
+ */
 
-router.put('/:id', async (req, res) => {
+router.put('/:id',isManager, async (req, res) => {
 
     const roomId = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(roomId)) {
@@ -165,8 +225,31 @@ router.put('/:id', async (req, res) => {
         res.status(500).send('An error occurred while updating the room.');
     }
 });
-
-router.delete('/:id', async (req, res) => {
+/**
+ * @swagger
+ * room/{id}:
+ *   delete:
+ *     summary: Delete a room by ID
+ *     tags: 
+ *       - Rooms
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The room ID
+ *     responses:
+ *       200:
+ *         description: Room deleted successfully.
+ *       404:
+ *         description: The room with this ID was not found.
+ *       500:
+ *         description: An error occurred.
+ */
+router.delete('/:id',isManager, async (req, res) => {
     try {
        const room= await Room.findByIdAndDelete(req.params.id);
         if (!room) return res.status(404).send('The room with this ID was not found');

@@ -15,4 +15,5 @@ module.exports = function (app) {
   app.use("/booking", booking);
   app.use("/bookingHistory", bookingHistory);
   app.use("/bookingApprove", bookingApprove);
+  app.use("/room", rooms);
 };
