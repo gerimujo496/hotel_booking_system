@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
+const { required } = require("joi");
 
 const userSchema = new mongoose.Schema({
   firstName: { type: String, minLength: 3, maxLength: 55, required: true },
