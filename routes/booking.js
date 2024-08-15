@@ -14,9 +14,13 @@ const router = express.Router();
  *     summary: Request to book a room
  *     tags: 
  *       - Client Bookings
- *     security:
- *       - bearerAuth: []
  *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *       - in: query
  *         name: arrivalDate
  *         schema:
@@ -129,9 +133,13 @@ router.post("/requestToBook/", isClient, async (req, res) => {
  *     summary: Delete a booking request
  *     tags: 
  *       - Client Bookings
- *     security:
- *       - bearerAuth: []
  *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *       - in: path
  *         name: bookingId
  *         required: true
@@ -197,9 +205,13 @@ router.delete("/requestToBook/:bookingId", isClient, async (req, res) => {
  *     summary: Retrieve booking details by booking ID
  *     tags: 
  *       - Client Bookings
- *     security:
- *       - bearerAuth: []
  *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *       - in: path
  *         name: bookingId
  *         required: true
@@ -327,9 +339,13 @@ router.get("/requestToBook/:bookingId", isClient, async (req, res) => {
  *     summary: Update booking details by booking ID
  *     tags: 
  *       - Client Bookings
- *     security:
- *       - bearerAuth: []
  *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *       - in: path
  *         name: bookingId
  *         required: true
@@ -457,8 +473,13 @@ router.put("/requestToBook/:bookingId", isClient, async (req, res) => {
  *     summary: Get the list of current clients with ongoing bookings
  *     tags: 
  *       - Client Bookings
- *     security:
- *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *     responses:
  *       200:
  *         description: List of current clients with ongoing bookings
@@ -521,8 +542,13 @@ router.get("/getCurrentClient", isManager, async (req, res) => {
  *     summary: Get booking history of the current client
  *     tags: 
  *       - Client Bookings
- *     security:
- *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *     responses:
  *       200:
  *         description: Booking history of the current client
@@ -598,9 +624,13 @@ router.get("/getBookingHistory/", isClient, async (req, res) => {
  *     summary: Get a voucher PDF for a specific booking
  *     tags: 
  *       - Vouchers
- *     security:
- *       - bearerAuth: []
  *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *       - in: path
  *         name: bookingId
  *         schema:

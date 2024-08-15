@@ -3,7 +3,7 @@ const express = require("express");
 const isManager = require("../../middleware/isManager");
 const { Booking } = require("../../models/booking");
 const router = express.Router();
-const isManager = require("../../middleware/isManager");
+
 /**
  * @swagger
  * /bookingApprove/{id}:
@@ -11,9 +11,13 @@ const isManager = require("../../middleware/isManager");
  *     summary: Approve a booking and update other conflicting bookings.
  *     tags: 
  *       - Manager Bookings
- *     security:
- *       - bearerAuth: []
  *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *       - in: path
  *         name: id
  *         schema:
