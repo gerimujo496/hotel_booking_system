@@ -4,7 +4,10 @@ const validateRoom = require('./roomValidation');
 const mongoose = require('mongoose'); 
 const { Booking } = require('../../models/booking');
 
+
 const router = express.Router();
+
+
 
 router.get('/', async (req, res) => {
     try {
@@ -31,10 +34,9 @@ router.get('/', async (req, res) => {
         const availableRooms = await Room.find({
             _id: { $nin: bookedRoomIds }
         });
-        if (availableRooms.length === 0) return res.status(404).send('No available rooms for this date');
+        if (availableRooms.length === 0) return res.status(404).send('There are no available rooms in the provided dates');
         res.send(availableRooms);
     } catch (err) {
-        console.error(err); 
         res.status(500).send('An error occurred while getting the room.');
     }
 });
