@@ -7,44 +7,16 @@ const { Booking } = require('../../models/booking');
 
 const router = express.Router();
 
-/**
- * @swagger
- * components:
- *   schemas:
- *     Room:
- *       type: object
- *       required:
- *         - type
- *         - number
- *       properties:
- *         id:
- *           type: string
- *           description: The auto-generated id of the room
- *         type:
- *           type: string
- *           description: The type of room (e.g., Single, Double)
- *         number:
- *           type: integer
- *           description: The room number
- *         description:
- *           type: string
- *           description: A brief description of the room
- *         numberOfBeds:
- *           type: integer
- *           description: The number of beds in the room
- *       example:
- *         id: d5fE_asz
- *         type: Single
- *         number: 101
- *         description: A cozy single room with a sea view.
- *         numberOfBeds: 1
- */
+
 
 /**
  * @swagger
  * /api/room:
+
  *   get:
  *     summary: Retrieve a list of all the rooms or available rooms by date
+ *     tags: 
+ *       - Rooms
  *     parameters:
  *       - in: query
  *         name: arrivalDate
@@ -87,8 +59,8 @@ router.get('/', async (req, res) => {
         const bookedRooms = await Booking.find({
             $or: [
                 {
-                    arrivalDate: { $lte: departure,$gte: arrival  },
-                    departureDate: { $gte: arrival, $lte: departure }
+                    arrivalDate: { $lte: departure },
+                    departureDate: { $gte: arrival }
                 }
             ]
         }).select("roomId");
@@ -109,6 +81,8 @@ router.get('/', async (req, res) => {
  * /api/room/{id}:
  *   get:
  *     summary: Retrieve a room by ID
+ *     tags: 
+ *       - Rooms
  *     parameters:
  *       - in: path
  *         name: id
@@ -151,6 +125,8 @@ router.get('/:id', async (req, res) => {
  * /api/room:
  *   post:
  *     summary: Create a new room
+ *     tags: 
+ *       - Rooms
  *     requestBody:
  *       required: true
  *       content:
@@ -190,6 +166,8 @@ router.post('/', async (req, res) => {
  * /api/room/{id}:
  *   put:
  *     summary: Update an existing room
+ *     tags: 
+ *       - Rooms
  *     parameters:
  *       - in: path
  *         name: id
@@ -243,6 +221,8 @@ router.put('/:id', async (req, res) => {
  * /api/room/{id}:
  *   delete:
  *     summary: Delete a room by ID
+ *     tags: 
+ *       - Rooms
  *     parameters:
  *       - in: path
  *         name: id

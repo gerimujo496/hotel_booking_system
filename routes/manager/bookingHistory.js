@@ -3,6 +3,48 @@ const express = require("express");
 const { Booking } = require("../../models/booking");
 const router = express.Router();
 
+/**
+ * @swagger
+ * /bookingHistory:
+ *   get:
+ *     summary: Get all bookings
+ *     tags:
+ *       - Bookings
+ *     responses:
+ *       200:
+ *         description: A list of all bookings
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   _id:
+ *                     type: string
+ *                     description: The booking ID.
+ *                   userId:
+ *                     type: string
+ *                     description: The ID of the user who made the booking.
+ *                   roomId:
+ *                     type: string
+ *                     description: The ID of the booked room.
+ *                   arrivalDate:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The arrival date for the booking.
+ *                   departureDate:
+ *                     type: string
+ *                     format: date-time
+ *                     description: The departure date for the booking.
+ *                   isApproved:
+ *                     type: boolean
+ *                     description: Indicates whether the booking is approved.
+ *       404:
+ *         description: No bookings found in the history.
+ *       500:
+ *         description: An error occurred while retrieving the bookings.
+ */
 router.get("/", async (req, res) => {
   const bookings = await Booking.find({});
 
