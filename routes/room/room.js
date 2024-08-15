@@ -42,9 +42,9 @@ const router = express.Router();
 
 /**
  * @swagger
- * /rooms:
+ * /api/room:
  *   get:
- *     summary: Retrieve a list of available rooms or rooms by dates
+ *     summary: Retrieve a list of all the rooms or available rooms by date
  *     parameters:
  *       - in: query
  *         name: arrivalDate
@@ -104,6 +104,32 @@ router.get('/', async (req, res) => {
         res.status(500).send('An error occurred while getting the room.');
     }
 });
+/**
+ * @swagger
+ * /api/room/{id}:
+ *   get:
+ *     summary: Retrieve a room by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The room ID
+ *     responses:
+ *       200:
+ *         description: A single room.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Room'
+ *       404:
+ *         description: The room was not found.
+ *       400:
+ *         description: Invalid ID format.
+ *       500:
+ *         description: An error occurred.
+ */
 
 router.get('/:id', async (req, res) => {
     const roomId = req.params.id;
@@ -120,6 +146,25 @@ router.get('/:id', async (req, res) => {
         res.status(500).send('An error occurred while retrieving the room');
     }
 });
+/**
+ * @swagger
+ * /api/room:
+ *   post:
+ *     summary: Create a new room
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Room'
+ *     responses:
+ *       201:
+ *         description: Room created successfully.
+ *       400:
+ *         description: Bad request.
+ *       500:
+ *         description: An error occurred.
+ */
 
 router.post('/', async (req, res) => {
     try {
@@ -140,6 +185,34 @@ router.post('/', async (req, res) => {
         res.status(500).send('An error occurred while saving the rooms.');
     }
 });
+/**
+ * @swagger
+ * /api/room/{id}:
+ *   put:
+ *     summary: Update an existing room
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The room ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Room'
+ *     responses:
+ *       200:
+ *         description: Room updated successfully.
+ *       404:
+ *         description: The room was not found.
+ *       400:
+ *         description: Invalid ID format or bad request.
+ *       500:
+ *         description: An error occurred.
+ */
 
 router.put('/:id', async (req, res) => {
 
@@ -165,7 +238,26 @@ router.put('/:id', async (req, res) => {
         res.status(500).send('An error occurred while updating the room.');
     }
 });
-
+/**
+ * @swagger
+ * /api/room/{id}:
+ *   delete:
+ *     summary: Delete a room by ID
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The room ID
+ *     responses:
+ *       200:
+ *         description: Room deleted successfully.
+ *       404:
+ *         description: The room with this ID was not found.
+ *       500:
+ *         description: An error occurred.
+ */
 router.delete('/:id', async (req, res) => {
     try {
        const room= await Room.findByIdAndDelete(req.params.id);
