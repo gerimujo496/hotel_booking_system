@@ -13,6 +13,7 @@ router.post("/:id", async (req, res) => {
     },
     { new: true }
   );
+
   await booking.save();
 
   const filter = {
