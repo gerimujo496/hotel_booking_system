@@ -18,9 +18,11 @@
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mongoose": "^8.5.2",
+    "pdfmake": "^0.2.11",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "winston": "^3.14.1"
+    "winston": "^3.14.1",
+    "z-schema": "^6.0.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

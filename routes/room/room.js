@@ -3,7 +3,8 @@ const { Room } = require('../../models/room');
 const validateRoom = require('./roomValidation');
 const mongoose = require('mongoose'); 
 const { Booking } = require('../../models/booking');
-
+const isClient = require("../../middleware/isClient");
+const isManager = require("../../middleware/isManager");
 
 const router = express.Router();
 
@@ -45,7 +46,7 @@ const router = express.Router();
  *         description: An error occurred.
  */
 
-router.get('/', async (req, res) => {
+router.get('/',isClient, async (req, res) => {
     try {
         const { arrivalDate, departureDate } = req.query;
 
@@ -105,7 +106,7 @@ router.get('/', async (req, res) => {
  *         description: An error occurred.
  */
 
-router.get('/:id', async (req, res) => {
+router.get('/:id',isManager, async (req, res) => {
     const roomId = req.params.id;
   
     if (!mongoose.Types.ObjectId.isValid(roomId)) {
@@ -142,7 +143,7 @@ router.get('/:id', async (req, res) => {
  *         description: An error occurred.
  */
 
-router.post('/', async (req, res) => {
+router.post('/', isManager,async (req, res) => {
     try {
         const { error } = validateRoom(req.body);
          if (error) return res.status(400).send(error.details[0].message);
@@ -192,7 +193,7 @@ router.post('/', async (req, res) => {
  *         description: An error occurred.
  */
 
-router.put('/:id', async (req, res) => {
+router.put('/:id',isManager, async (req, res) => {
 
     const roomId = req.params.id;
     if (!mongoose.Types.ObjectId.isValid(roomId)) {
@@ -238,7 +239,7 @@ router.put('/:id', async (req, res) => {
  *       500:
  *         description: An error occurred.
  */
-router.delete('/:id', async (req, res) => {
+router.delete('/:id',isManager, async (req, res) => {
     try {
        const room= await Room.findByIdAndDelete(req.params.id);
         if (!room) return res.status(404).send('The room with this ID was not found');
