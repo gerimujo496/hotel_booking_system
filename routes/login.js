@@ -3,6 +3,51 @@ const bcrypt = require("bcrypt");
 const Joi = require("joi");
 const { User } = require("../models/user");
 const router = express.Router();
+/**
+ * @swagger
+ * /login:
+ *   post:
+ *     summary: Login a user
+ *     tags: 
+ *       - Users
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - email
+ *               - password
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 description: User's email address
+ *                 example: user@example.com
+ *               password:
+ *                 type: string
+ *                 format: password
+ *                 description: User's password
+ *                 example: P@ssw0rd
+ *     responses:
+ *       200:
+ *         description: A JWT token that can be used for authentication
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *       400:
+ *         description: Bad Request - Invalid email or password
+ *         content:
+ *           text/plain:
+ *             schema:
+ *               type: string
+ *               example: Invalid email or password
+ *       500:
+ *         description: Server error
+ */
 
 router.post("/", async (req, res) => {
   const { error } = validate(req.body);
