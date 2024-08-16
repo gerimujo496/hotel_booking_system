@@ -5,33 +5,41 @@ const { Booking } = require("../../models/booking");
 const router = express.Router();
 
 router.post("/:id", isManager, async (req, res) => {
-  const booking = await Booking.findByIdAndUpdate(
-    req.params.id,
-    {
-      $set: {
-        isApproved: true,
+  try {
+    const booking = await Booking.findOne({ _id: req.params.id });
+
+    if (!booking) {
+      return res.status(404).send("Booking request not found.");
+    }
+
+    const approvedBooking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      {
+        $set: {
+          isApproved: true,
+        },
       },
-    },
-    { new: true }
-  );
+      { new: true }
+    );
 
-  await booking.save();
+    const filter = {
+      roomId: approvedBooking.roomId,
+      arrivalDate: { $lt: approvedBooking.departureDate },
+      departureDate: { $gt: approvedBooking.arrivalDate },
+      isApproved: null,
+    };
 
-  const filter = {
-    roomId: booking.roomId,
-    arrivalDate: { $lt: booking.departureDate },
-    departureDate: { $gt: booking.arrivalDate },
-    isApproved: null,
-  };
+    const updateBooking = {
+      $set: {
+        isApproved: false,
+      },
+    };
 
-  const updateBooking = {
-    $set: {
-      isApproved: false,
-    },
-  };
-
-  await Booking.updateMany(filter, updateBooking);
-  res.send(booking);
+    await Booking.updateMany(filter, updateBooking);
+    res.send(approvedBooking);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
 });
 
 module.exports = router;
