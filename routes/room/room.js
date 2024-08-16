@@ -13,26 +13,29 @@ const router = express.Router();
 /**
  * @swagger
  * /room:
-
  *   get:
  *     summary: Retrieve a list of all the rooms or available rooms by date
  *     tags: 
- *       - Rooms
- *     security:
- *       - bearerAuth: []
+ *       - Rooms   
  *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *       - in: query
  *         name: arrivalDate
  *         schema:
  *           type: string
  *           format: date
- *         description: Arrival date
+ *         description: Arrival date (optional)
  *       - in: query
  *         name: departureDate
  *         schema:
  *           type: string
  *           format: date
- *         description: Departure date
+ *         description: Departure date (optional)
  *     responses:
  *       200:
  *         description: A list of rooms.
@@ -76,6 +79,7 @@ router.get('/',isClient, async (req, res) => {
         if (availableRooms.length === 0) return res.status(404).send('There are no available rooms in the provided dates');
         res.send(availableRooms);
     } catch (err) {
+      
         res.status(500).send('An error occurred while getting the room.');
     }
 });
@@ -86,9 +90,13 @@ router.get('/',isClient, async (req, res) => {
  *     summary: Retrieve a room by ID
  *     tags: 
  *       - Rooms
- *     security:
- *       - bearerAuth: []
  *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *       - in: path
  *         name: id
  *         required: true
@@ -132,8 +140,13 @@ router.get('/:id',isManager, async (req, res) => {
  *     summary: Create a new room
  *     tags: 
  *       - Rooms
- *     security:
- *       - bearerAuth: []
+ *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *     requestBody:
  *       required: true
  *       content:
@@ -149,7 +162,7 @@ router.get('/:id',isManager, async (req, res) => {
  *         description: An error occurred.
  */
 
-router.post('/', isManager,async (req, res) => {
+router.post('/',isManager,async (req, res) => {
     try {
         const { error } = validateRoom(req.body);
          if (error) return res.status(400).send(error.details[0].message);
@@ -175,9 +188,13 @@ router.post('/', isManager,async (req, res) => {
  *     summary: Update an existing room
  *     tags: 
  *       - Rooms
- *     security:
- *       - bearerAuth: []
  *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *       - in: path
  *         name: id
  *         required: true
@@ -227,14 +244,18 @@ router.put('/:id',isManager, async (req, res) => {
 });
 /**
  * @swagger
- * room/{id}:
+ * /room/{id}:
  *   delete:
  *     summary: Delete a room by ID
  *     tags: 
  *       - Rooms
- *     security:
- *       - bearerAuth: []
  *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *       - in: path
  *         name: id
  *         required: true
