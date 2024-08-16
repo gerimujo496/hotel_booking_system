@@ -3,6 +3,7 @@ const bcrypt = require("bcrypt");
 const Joi = require("joi");
 const { User } = require("../models/user");
 const router = express.Router();
+
 /**
  * @swagger
  * /login:
@@ -56,7 +57,7 @@ router.post("/", async (req, res) => {
   }
 
   let user = await User.findOne({ email: req.body.email });
-
+  
   if (!user) {
     return res.status(400).send("Invalid email or password");
   }

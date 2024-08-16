@@ -54,7 +54,6 @@ const router = express.Router();
  *         description: An error occurred while retrieving the bookings.
  */
 
-
 router.get("/", isManager, async (req, res) => {
   const bookings = await Booking.find({});
 

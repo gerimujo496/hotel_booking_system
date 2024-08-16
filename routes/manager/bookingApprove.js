@@ -9,7 +9,7 @@ const router = express.Router();
  * /bookingApprove/{id}:
  *   post:
  *     summary: Approve a booking and update other conflicting bookings.
- *     tags: 
+ *     tags:
  *       - Manager Bookings
  *     parameters:
  *       - in: header
@@ -59,7 +59,6 @@ const router = express.Router();
  *       500:
  *         description: An error occurred while processing the request.
  */
-
 
 router.post("/:id", isManager, async (req, res) => {
   try {

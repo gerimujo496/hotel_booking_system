@@ -5,7 +5,6 @@ const mongoose = require("mongoose");
 const { Booking } = require("../../models/booking");
 const isClient = require("../../middleware/isClient");
 const isManager = require("../../middleware/isManager");
-
 const router = express.Router();
 
 /**
@@ -84,6 +83,7 @@ router.get("/", isClient, async (req, res) => {
     res.status(500).send("An error occurred while getting the room.");
   }
 });
+
 /**
  * @swagger
  * /room/{id}:
@@ -134,6 +134,7 @@ router.get("/:id", isManager, async (req, res) => {
     res.status(500).send("An error occurred while retrieving the room");
   }
 });
+
 /**
  * @swagger
  * /room:
@@ -242,6 +243,7 @@ router.put("/:id", isManager, async (req, res) => {
     res.status(500).send("An error occurred while updating the room.");
   }
 });
+
 /**
  * @swagger
  * /room/{id}:

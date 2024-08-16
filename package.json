@@ -21,7 +21,6 @@
     "pdfmake": "^0.2.11",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "winston": "^3.14.1",
     "z-schema": "^6.0.2"
   },
   "devDependencies": {
