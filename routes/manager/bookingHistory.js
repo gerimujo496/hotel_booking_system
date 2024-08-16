@@ -3,7 +3,7 @@ const express = require("express");
 const isManager = require("../../middleware/isManager");
 const { Booking } = require("../../models/booking");
 const router = express.Router();
-const isManager = require("../../middleware/isManager");
+
 /**
  * @swagger
  * /bookingHistory:
@@ -48,7 +48,6 @@ const isManager = require("../../middleware/isManager");
  *       500:
  *         description: An error occurred while retrieving the bookings.
  */
-
 
 router.get("/", isManager, async (req, res) => {
   const bookings = await Booking.find({});

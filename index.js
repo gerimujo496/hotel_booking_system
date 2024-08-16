@@ -1,10 +1,10 @@
-const express = require("express");
 require("dotenv").config();
+const express = require("express");
 const swaggerSetup = require('./swagger'); 
 
 const app = express();
-swaggerSetup(app);
 
+swaggerSetup(app);
 require("./startup/db")();
 require("./startup/routes")(app);
 

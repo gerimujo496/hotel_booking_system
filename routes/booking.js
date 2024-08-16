@@ -4,15 +4,16 @@ const { Booking } = require("../models/booking");
 const { Room } = require("../models/room");
 const isClient = require("../middleware/isClient");
 const isManager = require("../middleware/isManager");
-const PdfPrinter = require("pdfmake");
 const generateVoucher = require("../helpers/generateVoucher");
+const mongoose = require("mongoose");
 const router = express.Router();
+
 /**
  * @swagger
  * /booking/requestToBook/:
  *   post:
  *     summary: Request to book a room
- *     tags: 
+ *     tags:
  *       - Client Bookings
  *     security:
  *       - bearerAuth: []
@@ -88,6 +89,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
+
 router.post("/requestToBook/", isClient, async (req, res) => {
   const { arrivalDate, departureDate, roomId } = req.query;
   const { user } = req;
@@ -121,13 +123,12 @@ router.post("/requestToBook/", isClient, async (req, res) => {
   res.status(201).send(newBooking);
 });
 
-
 /**
  * @swagger
  * /booking/requestToBook/{bookingId}:
  *   delete:
  *     summary: Delete a booking request
- *     tags: 
+ *     tags:
  *       - Client Bookings
  *     security:
  *       - bearerAuth: []
@@ -177,6 +178,10 @@ router.delete("/requestToBook/:bookingId", isClient, async (req, res) => {
   const { bookingId } = req.params;
   if (!bookingId) return res.status(400).send(`Invalid Request`);
 
+  if (!mongoose.Types.ObjectId.isValid(bookingId)) {
+    return res.status(400).send("Invalid ID format");
+  }
+
   const bookingBody = {
     _id: bookingId,
   };
@@ -195,7 +200,7 @@ router.delete("/requestToBook/:bookingId", isClient, async (req, res) => {
  * /booking/requestToBook/{bookingId}:
  *   get:
  *     summary: Retrieve booking details by booking ID
- *     tags: 
+ *     tags:
  *       - Client Bookings
  *     security:
  *       - bearerAuth: []
@@ -294,6 +299,10 @@ router.get("/requestToBook/:bookingId", isClient, async (req, res) => {
   const { bookingId } = req.params;
   if (!bookingId) return res.status(400).send(`Invalid Request`);
 
+  if (!mongoose.Types.ObjectId.isValid(bookingId)) {
+    return res.status(400).send("Invalid ID format");
+  }
+
   const queryBody = {};
 
   queryBody.bookingBody = { _id: bookingId };
@@ -325,7 +334,7 @@ router.get("/requestToBook/:bookingId", isClient, async (req, res) => {
  * /booking/requestToBook/{bookingId}:
  *   put:
  *     summary: Update booking details by booking ID
- *     tags: 
+ *     tags:
  *       - Client Bookings
  *     security:
  *       - bearerAuth: []
@@ -411,6 +420,10 @@ router.put("/requestToBook/:bookingId", isClient, async (req, res) => {
   const { arrivalDate, departureDate, roomId } = req.query;
   const { bookingId } = req.params;
 
+  if (!mongoose.Types.ObjectId.isValid(bookingId)) {
+    return res.status(400).send("Invalid ID format");
+  }
+
   if (!arrivalDate || !departureDate || !roomId || !bookingId)
     return res.status(400).send(`Invalid Request !`);
 
@@ -455,7 +468,7 @@ router.put("/requestToBook/:bookingId", isClient, async (req, res) => {
  * /booking/getCurrentClient:
  *   get:
  *     summary: Get the list of current clients with ongoing bookings
- *     tags: 
+ *     tags:
  *       - Client Bookings
  *     security:
  *       - bearerAuth: []
@@ -519,7 +532,7 @@ router.get("/getCurrentClient", isManager, async (req, res) => {
  * /booking/getBookingHistory:
  *   get:
  *     summary: Get booking history of the current client
- *     tags: 
+ *     tags:
  *       - Client Bookings
  *     security:
  *       - bearerAuth: []
@@ -596,7 +609,7 @@ router.get("/getBookingHistory/", isClient, async (req, res) => {
  * /booking/getVoucher/{bookingId}:
  *   get:
  *     summary: Get a voucher PDF for a specific booking
- *     tags: 
+ *     tags:
  *       - Vouchers
  *     security:
  *       - bearerAuth: []
@@ -638,6 +651,10 @@ router.get("/getVoucher/:bookingId", isClient, async (req, res) => {
   try {
     const { user } = req;
     const { bookingId } = req.params;
+
+    if (!mongoose.Types.ObjectId.isValid(bookingId)) {
+      return res.status(400).send("Invalid ID format");
+    }
 
     const booking = await Booking.findOne({ _id: bookingId })
       .populate("userId", "firstName lastName email")

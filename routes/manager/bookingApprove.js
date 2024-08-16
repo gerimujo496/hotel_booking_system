@@ -3,13 +3,13 @@ const express = require("express");
 const isManager = require("../../middleware/isManager");
 const { Booking } = require("../../models/booking");
 const router = express.Router();
-const isManager = require("../../middleware/isManager");
+
 /**
  * @swagger
  * /bookingApprove/{id}:
  *   post:
  *     summary: Approve a booking and update other conflicting bookings.
- *     tags: 
+ *     tags:
  *       - Manager Bookings
  *     security:
  *       - bearerAuth: []
@@ -55,7 +55,6 @@ const isManager = require("../../middleware/isManager");
  *       500:
  *         description: An error occurred while processing the request.
  */
-
 
 router.post("/:id", isManager, async (req, res) => {
   const booking = await Booking.findByIdAndUpdate(
