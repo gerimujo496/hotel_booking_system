@@ -12,8 +12,8 @@ const router = express.Router();
  * /room:
  *   get:
  *     summary: Retrieve a list of all the rooms or available rooms by date
- *     tags: 
- *       - Rooms   
+ *     tags:
+ *       - Rooms
  *     parameters:
  *       - in: header
  *         name: x-auth-token
@@ -80,7 +80,6 @@ router.get("/", isClient, async (req, res) => {
         .status(404)
         .send("There are no available rooms in the provided dates");
     res.send(availableRooms);
-
   } catch (err) {
     res.status(500).send("An error occurred while getting the room.");
   }
@@ -223,7 +222,6 @@ router.post("/", isManager, async (req, res) => {
  */
 
 router.put("/:id", isManager, async (req, res) => {
-
   const roomId = req.params.id;
   if (!mongoose.Types.ObjectId.isValid(roomId)) {
     return res.status(400).send("Invalid ID format");
