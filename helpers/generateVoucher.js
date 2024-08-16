@@ -9,7 +9,7 @@ module.exports = (booking) => {
       bolditalics: "Helvetica-BoldOblique",
     },
   };
-
+  console.log(booking);
   const docDefinition = {
     content: [
       { text: "Voucher Document", style: "header" },

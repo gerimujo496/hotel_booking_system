@@ -11,9 +11,13 @@ const router = express.Router();
  *     summary: Approve a booking and update other conflicting bookings.
  *     tags:
  *       - Manager Bookings
- *     security:
- *       - bearerAuth: []
  *     parameters:
+ *       - in: header
+ *         name: x-auth-token
+ *         schema:
+ *           type: string
+ *         required: true
+ *         description: The token provided to the client for authentication
  *       - in: path
  *         name: id
  *         schema:

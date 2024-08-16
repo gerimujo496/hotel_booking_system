@@ -15,6 +15,7 @@ const swaggerDefinition = {
       description: 'Development server'
     }
   ]
+ 
 };
 
 const options = {
