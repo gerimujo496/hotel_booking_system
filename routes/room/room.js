@@ -66,10 +66,15 @@ router.get('/',isClient, async (req, res) => {
             $or: [
                 {
                     arrivalDate: { $lte: departure },
-                    departureDate: { $gte: arrival }
+                    departureDate: { $gte: arrival },
+                    $and: [
+                        { isApproved: { $ne: null } },
+                        { isApproved: { $ne: false } }
+                    ]
                 }
             ]
         }).select("roomId");
+        
        
         const bookedRoomIds = bookedRooms.map(booking => booking.roomId);
 
