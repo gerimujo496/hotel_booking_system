@@ -56,7 +56,6 @@ router.get("/", isClient, async (req, res) => {
       const room = await Room.find({});
       return res.send(room);
     }
-
     const arrival = new Date(arrivalDate);
     const departure = new Date(departureDate);
 
@@ -67,6 +66,7 @@ router.get("/", isClient, async (req, res) => {
           departureDate: { $gte: arrival },
         },
       ],
+      $and: [{ isApproved: { $ne: null } }, { isApproved: { $ne: false } }],
     }).select("roomId");
 
     const bookedRoomIds = bookedRooms.map((booking) => booking.roomId);
@@ -74,7 +74,6 @@ router.get("/", isClient, async (req, res) => {
     const availableRooms = await Room.find({
       _id: { $nin: bookedRoomIds },
     });
-
     if (availableRooms.length === 0)
       return res
         .status(404)
@@ -226,7 +225,6 @@ router.put("/:id", isManager, async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(roomId)) {
     return res.status(400).send("Invalid ID format");
   }
-
   try {
     const room = await Room.findById(req.params.id);
     if (!room) return res.status(404).send("The room was not found");
@@ -274,12 +272,23 @@ router.put("/:id", isManager, async (req, res) => {
  *       500:
  *         description: An error occurred.
  */
-
 router.delete("/:id", isManager, async (req, res) => {
   try {
+    const roomReferenceInBooking = await Booking.findOne({
+      roomId: req.params.id,
+    });
+
+    if (roomReferenceInBooking) {
+      return res
+        .status(409)
+        .send("Cannot delete room, because it is currently booked!");
+    }
+
     const room = await Room.findByIdAndDelete(req.params.id);
-    if (!room)
+
+    if (!room) {
       return res.status(404).send("The room with this ID was not found");
+    }
 
     res.send(room);
   } catch (err) {
