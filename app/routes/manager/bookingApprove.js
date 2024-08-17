@@ -1,7 +1,8 @@
 require("express-async-errors");
-const express = require("express");
+
 const isManager = require("../../middleware/isManager");
 const { Booking } = require("../../models/booking");
+const express = require("express");
 const router = express.Router();
 
 /**

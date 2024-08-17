@@ -1,8 +1,8 @@
-const { Router } = require("express");
-const { Passport } = require("passport");
+const Passport = require("passport");
 const controller = require("./manager.controller");
 const authorization = require("./manager.authorization");
-const router = new Router();
+const express = require("express");
+const router = express.Router();
 
 const BASE_ROUTE = "/manager";
 
