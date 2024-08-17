@@ -1,4 +1,10 @@
 const jwt = require("jsonwebtoken");
+const { ExtractJwt, Strategy } = require("passport-jwt");
+
+const opts = {
+  secretOrKey: process.env.JWT_PRIVATE_KEY,
+  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+};
 
 const createToken = (user) =>
   jwt.sign(
@@ -10,11 +16,11 @@ const createToken = (user) =>
       isManager: user.isManager,
     },
 
-    process.env.JWT_PRIVATE_KEY,
+    opts.secretOrKey,
     { expiresIn: "10h" }
   );
 
-const verifyToken = (token, done) => {
+const verify = (token, done) => {
   const decoded = jwt.decode(token, process.env.JWT_PRIVATE_KEY);
   if (
     decoded?._id &&
@@ -30,4 +36,5 @@ const verifyToken = (token, done) => {
 };
 
 module.exports.createToken = createToken;
-module.exports.verifyToken = verifyToken;
+module.exports.verify = verify;
+module.exports.Jwt = new Strategy(opts, verify)

@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
-const swaggerSetup = require("./swagger");
-const initDB = require("./app/config/db");
+const swaggerSetup = require("../swagger");
+const initDB = require("./config/db");
 const app = express();
 const port = process.env.PORT || 4000;
 
