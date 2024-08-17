@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const jwt = require("jsonwebtoken");
-const { required } = require("joi");
+const dbTables = require("../constants/db_tables");
 
 const userSchema = new mongoose.Schema({
   firstName: { type: String, minLength: 3, maxLength: 55, required: true },
@@ -26,6 +26,6 @@ userSchema.methods.generateAuthToken = function () {
   return token;
 };
 
-const User = mongoose.model("User", userSchema);
+const User = mongoose.model(dbTables.USER, userSchema);
 
 exports.User = User;

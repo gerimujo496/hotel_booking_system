@@ -1,12 +1,17 @@
 require("dotenv").config();
 const express = require("express");
-const swaggerSetup = require('./swagger'); 
-
+const swaggerSetup = require("./swagger");
+const initDB = require("./app/config/db");
 const app = express();
+const port = process.env.PORT || 4000;
+
 
 swaggerSetup(app);
-require("./startup/db")();
-require("./startup/routes")(app);
 
-const port = process.env.PORT || 4000;
-app.listen(port, () => console.info(`listening on port ${port}`));
+require("./app/routes")(app);
+
+
+initDB().then(() =>
+  app.listen(port, () => console.info(`listening on port ${port}`))
+);
+
