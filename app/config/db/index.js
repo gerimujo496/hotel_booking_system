@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 module.exports = function () {
   return new Promise((resolve, reject) => {
     mongoose
-      .connect(process.env.DB)
+      .connect("mongodb://localhost/hotel")
       .then(() => resolve())
       .catch((err) => reject(err));
   });

@@ -1,3 +1,5 @@
+require("express-async-errors");
+
 const errors = require("../../constants/errors");
 const { Booking } = require("../../models/booking");
 
@@ -39,19 +41,18 @@ const approveBooking = async (req, res) => {
   }
 };
 
-const getBookingHistory = async(req, res)=>{
-try{
+const getBookingHistory = async (req, res) => {
+  try {
     const bookings = await Booking.find({});
 
     if (bookings.length === 0) {
       return res.send("There are no bookings in the history");
     }
-  
-    res.send(bookings);
-}catch(error){
-    res.status(500).send(errors.ERROR_STATUS_500("getting", "booking history"));
-}
-}
 
-module.exports.approveBooking = approveBooking;
-module.exports.getBookingHistory = getBookingHistory;
+    res.send(bookings);
+  } catch (error) {
+    res.status(500).send(errors.ERROR_STATUS_500("getting", "booking history"));
+  }
+};
+const exportObj = { approveBooking, getBookingHistory };
+module.exports = exportObj

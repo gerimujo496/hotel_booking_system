@@ -1,6 +1,11 @@
 /**
  * @swagger
  * components:
+ *   securitySchemes:
+ *     BearerAuth:
+ *       type: http
+ *       scheme: bearer
+ *       bearerFormat: JWT
  *   schemas:
  *     Room:
  *       type: object
@@ -24,17 +29,10 @@
  *           type: integer
  *           description: The number of beds in the room
  *       example:
- *         id: d5fE_asz
  *         type: Single
  *         number: 101
  *         description: A cozy single room with a sea view.
  *         numberOfBeds: 1
- */
-
-/**
- * @swagger
- * components:
- *   schemas:
  *     User:
  *       type: object
  *       required:
@@ -66,12 +64,6 @@
  *         lastName: Doe
  *         email: john.doe@example.com
  *         password: securePassword123
- */
-
-/**
- * @swagger
- * components:
- *   schemas:
  *     Booking:
  *       type: object
  *       required:
@@ -102,4 +94,31 @@
  *           type: boolean
  *           description: Indicates whether the booking is approved.
  *           example: true
+ *   parameters:
+ *     ArrivalDateParam:
+ *       in: query
+ *       name: arrivalDate
+ *       schema:
+ *         type: string
+ *         format: date
+ *       description: Arrival date (optional)
+ *     DepartureDateParam:
+ *       in: query
+ *       name: departureDate
+ *       schema:
+ *         type: string
+ *         format: date
+ *       description: Departure date (optional)
+ *     RoomId:
+ *       in: path
+ *       name: id
+ *       schema:
+ *         type: string
+ *       description: Room Id(optional)
+ *     BookingId:
+ *       in: path
+ *       name: id
+ *       schema:
+ *         type: string
+ *       description: Booking Id(optional)
  */

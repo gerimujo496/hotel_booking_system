@@ -195,8 +195,6 @@ const getVoucher = async (req, res) => {
       return res.status(404).send(() => errors.NOT_FOUND("booking", bookingId));
     }
 
-   
-
     if (booking.userId._id != user._id)
       return res.status(403).send(errors.FORBIDDEN);
 

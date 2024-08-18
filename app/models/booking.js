@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
-const dbTables = require("../config/constants/db_tables");
+const db_tables = require("../constants/db_tables");
+
 
 const bookingSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -8,5 +9,5 @@ const bookingSchema = new mongoose.Schema({
   departureDate: { type: Date, required: true },
   isApproved: { type: Boolean, default: null },
 });
-const Booking = mongoose.model(dbTables.BOOKING, bookingSchema);
+const Booking = mongoose.model(db_tables.BOOKING, bookingSchema);
 exports.Booking = Booking;

@@ -3,7 +3,7 @@ const Passport = require("passport");
 const { Jwt } = require("./jwt");
 const BasicAuth = "./basic";
 
-export const jwtAuth = () => {
+ const jwtAuth = () => {
   Passport.use(Jwt);
 };
 

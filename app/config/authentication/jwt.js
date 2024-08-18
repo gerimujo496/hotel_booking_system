@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const { ExtractJwt, Strategy } = require("passport-jwt");
 
 const opts = {
-  secretOrKey: process.env.JWT_PRIVATE_KEY,
+  secretOrKey: "hotelPrivateKey",
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 };
 
@@ -21,13 +21,12 @@ const createToken = (user) =>
   );
 
 const verify = (token, done) => {
-  const decoded = jwt.decode(token, process.env.JWT_PRIVATE_KEY);
   if (
-    decoded?._id &&
-    decoded?.firstName &&
-    decoded?.lastName &&
-    decoded?.email &&
-    decoded?.isManager !== undefined
+    token?._id &&
+    token?.firstName &&
+    token?.lastName &&
+    token?.email &&
+    token?.isManager !== undefined
   ) {
     done(null, token);
   } else {
@@ -37,4 +36,4 @@ const verify = (token, done) => {
 
 module.exports.createToken = createToken;
 module.exports.verify = verify;
-module.exports.Jwt = new Strategy(opts, verify)
+module.exports.Jwt = new Strategy(opts, verify);

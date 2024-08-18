@@ -14,5 +14,9 @@ const getBookingHistoryAuthorization = (req, res, next) => {
   next();
 };
 
-module.exports.approveBookingAuthorization = approveBookingAuthorization;
-module.exports.getBookingHistoryAuthorization = getBookingHistoryAuthorization;
+const exportObj = {
+  approveBookingAuthorization,
+  getBookingHistoryAuthorization,
+};
+
+module.exports = exportObj;

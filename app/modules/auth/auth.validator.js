@@ -29,5 +29,9 @@ const loginUserValidator = (req, res, next) => {
   next();
 };
 
-module.exports.registerUserValidator = registerUserValidator;
-module.exports.loginUserValidator = loginUserValidator;
+const exportObj = {
+  registerUserValidator,
+  loginUserValidator
+}
+
+module.exports = exportObj

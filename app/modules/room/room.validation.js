@@ -1,6 +1,7 @@
 const Joi = require("joi");
 
 const validateRoom = (req, res, next) => {
+ 
   const schema = Joi.object({
     type: Joi.string().required(),
     number: Joi.number().required(),
@@ -15,4 +16,4 @@ const validateRoom = (req, res, next) => {
   next();
 };
 
-module.exports.validateRoom = validateRoom;
+module.exports =  validateRoom;

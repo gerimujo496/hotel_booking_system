@@ -1,8 +1,9 @@
 const { createToken } = require("../../config/authentication/jwt");
 const errors = require("../../constants/errors");
 const { User } = require("../../models/user");
+const bcrypt = require("bcrypt");
 
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   let user = await User.findOne({ email: req.body.email });
   if (user) {
     return res.status(400).send({ message: errors.USER_ALREADY_REGISTERED });
@@ -18,7 +19,8 @@ const registerUser = async (req, res) => {
   res.sendStatus(204);
 };
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
+  console.log("request  ", req.body);
   let user = await User.findOne({ email: req.body.email });
 
   if (!user) {
@@ -38,5 +40,8 @@ const loginUser = async (req, res) => {
   res.status(200).send(token);
 };
 
-module.exports.registerUser = registerUser;
-module.exports.loginUser = loginUser;
+const exportObj = {
+  registerUser,
+  loginUser,
+};
+module.exports = exportObj;

@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const dbTables = require("../config/constants/db_tables");
+const dbTables = require("../constants/db_tables");
 
 const roomSchema = new mongoose.Schema({
   type: {
